@@ -22,11 +22,13 @@
         "commands": [
             {
                 "command": "extension.enableScopeHover",
-                "title": "Scope hover: enable"
+                "title": "enable hover",
+                "category": "scope-info"
             },
             {
                 "command": "extension.disableScopeHover",
-                "title": "Scope hover: disable"
+                "title": "disable hover",
+                "category": "scope-info"
             }
         ]
     },
