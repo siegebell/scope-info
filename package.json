@@ -44,11 +44,11 @@
 		"@types/node": "^6.0.40"
     },
     "bugs": {
-        "url": "https://github.com/siegebell/vsc-scope-info/issues"
+        "url": "https://github.com/siegebell/scope-info/issues"
     },
-    "homepage": "https://github.com/siegebell/vsc-scope-info/blob/master/README.md",
+    "homepage": "https://github.com/siegebell/scope-info/blob/master/README.md",
     "repository": {
         "type": "git",
-        "url": "https://github.com/siegebell/vsc-scope-info.git"
+        "url": "https://github.com/siegebell/scope-info.git"
     }
 }
