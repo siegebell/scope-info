@@ -4,7 +4,7 @@
     "description": "Displays the TextMate scope when you hover over text.",
     "version": "0.1.1",
     "publisher": "siegebell",
-    "license": "MIT license (MIT)",
+    "license": "MIT",
     "engines": {
         "vscode": "^1.7.0"
     },
@@ -22,11 +22,11 @@
         "commands": [
             {
                 "command": "extension.enableScopeHover",
-                "title": "Scope hover: Enable"
+                "title": "Scope hover: enable"
             },
             {
                 "command": "extension.disableScopeHover",
-                "title": "Scope hover: Disable"
+                "title": "Scope hover: disable"
             }
         ]
     },
@@ -41,6 +41,8 @@
     "devDependencies": {
         "typescript": "2.1.4",
         "vscode": "^1.0.3",
+        "mocha": "3.2.0",
+        "@types/mocha": "2.2.33",
 		"@types/node": "^6.0.40"
     },
     "bugs": {

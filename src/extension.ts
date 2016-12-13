@@ -6,6 +6,7 @@ import * as path from 'path';
 import * as fs from 'fs';
 import {DocumentController} from './document';
 import * as tm from './text-mate';
+import * as api from './api';
 
 /** Tracks all documents that substitutions are being applied to */
 let documents = new Map<vscode.Uri,DocumentController>();
@@ -31,12 +32,11 @@ function getLanguageScopeName(languageId: string) : string {
     const matchingLanguages = languages.filter(g => g.language === languageId);
     
     if(matchingLanguages.length > 0) {
-      console.info(`Mapping language ${languageId} to initial scope ${matchingLanguages[0].scopeName}`);
+      // console.info(`Mapping language ${languageId} to initial scope ${matchingLanguages[0].scopeName}`);
       return matchingLanguages[0].scopeName;
     }
   } catch(err) { }
-  console.info(`Cannot find a mapping for language ${languageId}; assigning default scope source.${languageId}`);
-  return 'source.' + languageId;
+  return undefined;
 }
 
 const grammarLocator : tm.IGrammarLocator = {
@@ -62,12 +62,33 @@ const grammarLocator : tm.IGrammarLocator = {
   }
 }
 
-let enabled = false;
-//let workspaceState : vscode.Memento;
+async function provideHoverInfo(subscriptions: vscode.Disposable[]) {
+  const allLanguages =
+    (await vscode.languages.getLanguages())
+    .filter(x => getLanguageScopeName(x) !== undefined);
+
+
+  subscriptions.push(vscode.languages.registerHoverProvider(allLanguages, {provideHover: (doc,pos,tok) : vscode.Hover => {
+    if(!isHoverEnabled())
+      return;
+    try {
+      const prettyDoc = documents.get(doc.uri);
+      if(prettyDoc) {
+        const token = prettyDoc.getScopeAt(pos);
+        if(token)
+          return {contents: [`Token: \`${token.text}\``, ...token.scopes], range: token.range}
+      }
+    } catch(err) {
+    }
+    return undefined;
+  }}));
+}
+
+export let workspaceState : vscode.Memento;
 
 /** initialize everything; main entry point */
-export function activate(context: vscode.ExtensionContext) : void {
-  // workspaceState = context.workspaceState;
+export function activate(context: vscode.ExtensionContext) : api.ScopeInfoAPI {
+  workspaceState = context.workspaceState;
 
   function registerCommand(commandId:string, run:(...args:any[])=>void): void {
     context.subscriptions.push(vscode.commands.registerCommand(commandId, run));
@@ -78,20 +99,49 @@ export function activate(context: vscode.ExtensionContext) : void {
 
   context.subscriptions.push(vscode.workspace.onDidOpenTextDocument(openDocument));
   context.subscriptions.push(vscode.workspace.onDidCloseTextDocument(closeDocument));
+  
+  provideHoverInfo(context.subscriptions);
 
-  // reloadConfiguration();
-  // if(workspaceState.get('enableScopeHover', true))
-  //   enableScopeHover();
+  reloadGrammar();
+
+  const api : api.ScopeInfoAPI = {
+    getScopeAt(document: vscode.TextDocument, position: vscode.Position) : api.Token|null {
+      try {
+        const prettyDoc = documents.get(document.uri);
+        if(prettyDoc) {
+          return prettyDoc.getScopeAt(position);
+        }
+      } catch(err) {
+      }
+      return null;
+    },
+    getScopeForLanguage(language: string) : string|null {
+      return getLanguageScopeName(language) || null;
+    },
+    async getGrammar(scopeName: string) : Promise<api.IGrammar|null> {
+      try {
+        if(textMateRegistry)
+          return await loadGrammar(scopeName);
+      } catch(err) { }
+      return null;
+    }
+  }
+  return api;
 }
 
+let hoverEnabled = false;
+export function isHoverEnabled() : boolean {
+  return hoverEnabled;
+  // return workspaceState.get('showHoverInfo', false as boolean) === true;
+}
 
-// /** Te user updated their settings.json */
-// function onConfigurationChanged(){
-//   reloadConfiguration();
-// }
+export function setHover(enabled: boolean) : void {
+  hoverEnabled = enabled;
+  // workspaceState.update('showHoverInfo', enabled);
+}
 
 /** Re-read the settings and recreate substitutions for all documents */
-function reloadConfiguration() {
+function reloadGrammar() {
   try {
     textMateRegistry = new tm.Registry(grammarLocator);
   } catch(err) {
@@ -106,23 +156,13 @@ function reloadConfiguration() {
 }
 
 function disableScopeHover() {
-  if(!enabled)
-    return;
-  // if(workspaceState.get('enableScopeHover') === false)
-  //   return;
-  // await workspaceState.update('enableScopeHover', false);
-  enabled = false;
+  setHover(false);
   unloadDocuments();
 }
 
 function enableScopeHover() {
-  // if(workspaceState.get('enableScopeHover') === true)
-  //   return;
-  // await workspaceState.update('enableScopeHover', true);
-  if(enabled)
-    return;
-  enabled = true;
-  reloadConfiguration();
+  setHover(true);
+  reloadGrammar();
 }
 
 
@@ -142,16 +182,16 @@ function loadGrammar(scopeName: string) : Promise<tm.IGrammar> {
 }
 
 async function openDocument(doc: vscode.TextDocument) {
-  if(!enabled)
-    return;
   try {
     const prettyDoc = documents.get(doc.uri);
     if(prettyDoc) {
       prettyDoc.refresh();
     } else if(textMateRegistry) {
         const scopeName = getLanguageScopeName(doc.languageId);
-        const grammar = await loadGrammar(scopeName);
-        documents.set(doc.uri, new DocumentController(doc, grammar));
+        if(scopeName) {
+          const grammar = await loadGrammar(scopeName);
+          documents.set(doc.uri, new DocumentController(doc, grammar));
+        }
     }
   } catch(err) {
   }

@@ -14,6 +14,16 @@
 				"${workspaceRoot}/out/**/*.js"
 			],
 			"preLaunchTask": "watch"
-		}
+		},
+		{
+    "name": "Launch Tests",
+    "type": "extensionHost",
+    "request": "launch",
+    "runtimeExecutable": "${execPath}",
+    "args": ["--extensionDevelopmentPath=${workspaceRoot}", "--extensionTestsPath=${workspaceRoot}/out/test" ],
+    "sourceMaps": true,
+    "outFiles": ["${workspaceRoot}/out/test"],
+    "preLaunchTask": "watch"
+}
 	]
 }

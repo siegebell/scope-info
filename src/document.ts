@@ -1,6 +1,7 @@
 import * as vscode from 'vscode';
 import * as textUtil from './text-util';
 import * as tm from './text-mate';
+import * as api from './api';
 
 const debugging = false;
 const activeEditorDecorationTimeout = 20;
@@ -19,19 +20,6 @@ export class DocumentController implements vscode.Disposable {
   ) {
     this.grammar = textMateGrammar;
 
-    this.subscriptions.push(vscode.languages.registerHoverProvider(doc.languageId, {provideHover: (d,pos,tok) : vscode.Hover => {
-      if(d.uri.toString() !== doc.uri.toString())
-        return undefined;
-      const state = this.grammarState[pos.line-1] || null;
-      const line = doc.lineAt(pos.line);
-      const tokens = this.grammar.tokenizeLine(line.text, state);
-      for(let t of tokens.tokens) {
-        if(t.startIndex <= pos.character && pos.character < t.endIndex)
-          return {contents: t.scopes, range: new vscode.Range(pos.line,t.startIndex,pos.line,t.endIndex)}
-      }
-      return undefined;
-    }}));
-    
     // Parse whole document
     const docRange = new vscode.Range(0,0,this.document.lineCount,0);
     this.reparsePretties(docRange);
@@ -57,6 +45,19 @@ export class DocumentController implements vscode.Disposable {
     return {tokens: lineTokens.tokens, invalidated: invalidated};
   }
 
+  public getScopeAt(position: vscode.Position) : api.Token|null {
+    if(!this.grammar)
+      return null;
+    position = this.document.validatePosition(position);
+    const state = this.grammarState[position.line-1] || null;
+    const line = this.document.lineAt(position.line);
+    const tokens = this.grammar.tokenizeLine(line.text, state);
+    for(let t of tokens.tokens) {
+      if(t.startIndex <= position.character && position.character < t.endIndex)
+        return {range: new vscode.Range(position.line,t.startIndex,position.line,t.endIndex), text: line.text.substring(t.startIndex,t.endIndex), scopes: t.scopes }
+    }
+    return null;
+  }
 
   private reparsePretties(range: vscode.Range) : void {
     range = this.document.validateRange(range);

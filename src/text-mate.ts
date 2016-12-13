@@ -1,29 +1,6 @@
 import * as path from 'path';
 const tm = require(path.join(require.main.filename, '../../node_modules/vscode-textmate/release/main.js'));
 
-// namespace N {
-//   /**
-//    * The registry that will hold all grammars.
-//    */
-//   export declare class Registry {
-//     private readonly _locator;
-//     private readonly _syncRegistry;
-//     constructor(locator?: IGrammarLocator);
-//     /**
-//      * Load the grammar for `scopeName` and all referenced included grammars asynchronously.
-//      */
-//     loadGrammar(initialScopeName: string, callback: (err: any, grammar: IGrammar) => void): void;
-//     /**
-//      * Load the grammar at `path` synchronously.
-//      */
-//     loadGrammarFromPathSync(path: string): IGrammar;
-//     /**
-//      * Get the grammar for `scopeName`. The grammar must first be created via `loadGrammar` or `loadGrammarFromPathSync`.
-//      */
-//     grammarForScopeName(scopeName: string): IGrammar;
-//   }  
-// }
-
 export function matchScope(scope: string, scopes: string[]) : boolean {
   if(!scope)
     return true;
