@@ -11,6 +11,9 @@
     "categories": [
         "Other"
     ],
+    "keywords": [
+        "TextMate", "scope", "grammar"
+    ],
     "activationEvents": [
         "onCommand:extension.enableScopeHover"
     ],
