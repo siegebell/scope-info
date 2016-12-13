@@ -1,0 +1,19 @@
+{
+	"compilerOptions": {
+		"module": "commonjs",
+		"moduleResolution": "node",
+		"target": "ES6",
+		"lib": [ "es6" ],
+		"outDir": "out",
+		"sourceMap": true,
+		"allowUnreachableCode": false,
+		"allowUnusedLabels": false,
+		"noFallthroughCasesInSwitch": true,
+		"noLib": false,
+		"pretty": true,
+		"rootDir": "."
+	},
+	"exclude": [
+		"node_modules"
+	]
+}

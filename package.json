@@ -1,0 +1,51 @@
+{
+    "name": "scope-info",
+    "displayName": "Scope Info",
+    "description": "Displays the TextMate scope when you hover over text.",
+    "version": "0.1.0",
+    "publisher": "siegebell",
+    "license": "MIT license (MIT)",
+    "engines": {
+        "vscode": "^1.7.0"
+    },
+    "categories": [
+        "Other"
+    ],
+    "activationEvents": [
+        "onCommand:extension.enableScopeHover"
+    ],
+    "main": "./out/src/extension",
+    "contributes": {
+        "commands": [
+            {
+                "command": "extension.enableScopeHover",
+                "title": "Scope hover: Enable"
+            },
+            {
+                "command": "extension.disableScopeHover",
+                "title": "Scope hover: Disable"
+            }
+        ]
+    },
+    "scripts": {
+        "vscode:prepublish": "tsc -p ./",
+        "postinstall": "node ./node_modules/vscode/bin/install",
+        "watch": "tsc -watch -p ./",
+        "compile": "tsc -p ./"
+    },
+    "dependencies": {
+    },
+    "devDependencies": {
+        "typescript": "2.1.4",
+        "vscode": "^1.0.3",
+		"@types/node": "^6.0.40"
+    },
+    "bugs": {
+        "url": "https://github.com/siegebell/vsc-scope-info/issues"
+    },
+    "homepage": "https://github.com/siegebell/vsc-scope-info/blob/master/README.md",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/siegebell/vsc-scope-info.git"
+    }
+}
