@@ -2,7 +2,7 @@
     "name": "scope-info",
     "displayName": "Scope Info",
     "description": "Displays the TextMate scope when you hover over text.",
-    "version": "0.1.1",
+    "version": "0.2.0",
     "publisher": "siegebell",
     "license": "MIT",
     "engines": {
@@ -22,12 +22,12 @@
         "commands": [
             {
                 "command": "extension.enableScopeHover",
-                "title": "enable hover",
+                "title": "enable hover information",
                 "category": "scope-info"
             },
             {
                 "command": "extension.disableScopeHover",
-                "title": "disable hover",
+                "title": "disable hover information",
                 "category": "scope-info"
             }
         ]
