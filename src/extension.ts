@@ -105,7 +105,7 @@ function reloadConfiguration() {
     openDocument(doc);
 }
 
-async function disableScopeHover() {
+function disableScopeHover() {
   if(!enabled)
     return;
   // if(workspaceState.get('enableScopeHover') === false)
@@ -115,7 +115,7 @@ async function disableScopeHover() {
   unloadDocuments();
 }
 
-async function enableScopeHover() {
+function enableScopeHover() {
   // if(workspaceState.get('enableScopeHover') === true)
   //   return;
   // await workspaceState.update('enableScopeHover', true);
@@ -126,7 +126,7 @@ async function enableScopeHover() {
 }
 
 
-async function loadGrammar(scopeName: string) : Promise<tm.IGrammar> {
+function loadGrammar(scopeName: string) : Promise<tm.IGrammar> {
   return new Promise<tm.IGrammar>((resolve,reject) => {
     try {
       textMateRegistry.loadGrammar(scopeName, (err, grammar) => {
@@ -144,17 +144,16 @@ async function loadGrammar(scopeName: string) : Promise<tm.IGrammar> {
 async function openDocument(doc: vscode.TextDocument) {
   if(!enabled)
     return;
-  // if(!workspaceState.get('enableScopeHover', false))
-  //   return;
-  const prettyDoc = documents.get(doc.uri);
-  if(prettyDoc) {
-    prettyDoc.refresh();
-  } else if(textMateRegistry) {
-    try {
-      const scopeName = getLanguageScopeName(doc.languageId);
-      const grammar = await loadGrammar(scopeName);
-      documents.set(doc.uri, new DocumentController(doc, grammar));
-    } catch(err) {}
+  try {
+    const prettyDoc = documents.get(doc.uri);
+    if(prettyDoc) {
+      prettyDoc.refresh();
+    } else if(textMateRegistry) {
+        const scopeName = getLanguageScopeName(doc.languageId);
+        const grammar = await loadGrammar(scopeName);
+        documents.set(doc.uri, new DocumentController(doc, grammar));
+    }
+  } catch(err) {
   }
 }
 

@@ -22,9 +22,7 @@ export class DocumentController implements vscode.Disposable {
     this.subscriptions.push(vscode.languages.registerHoverProvider(doc.languageId, {provideHover: (d,pos,tok) : vscode.Hover => {
       if(d.uri.toString() !== doc.uri.toString())
         return undefined;
-      const state = this.grammarState[pos.line-1];
-      if(!state)
-        return;
+      const state = this.grammarState[pos.line-1] || null;
       const line = doc.lineAt(pos.line);
       const tokens = this.grammar.tokenizeLine(line.text, state);
       for(let t of tokens.tokens) {
