@@ -40,3 +40,8 @@ export interface ScopeInfoAPI {
   getGrammar(scopeName: string) : Promise<IGrammar|null>;
   getScopeForLanguage(language: string) : string|null;
 }
+
+export function activate() : Thenable<ScopeInfoAPI> {
+  const siExt = vscode.extensions.getExtension<ScopeInfoAPI>('siegebell.scope-info');
+  return siExt.activate();
+}
