@@ -6,7 +6,7 @@ import * as path from 'path';
 import * as fs from 'fs';
 import {DocumentController} from './document';
 import * as tm from './text-mate';
-import * as api from './api';
+import * as api from './scope-info';
 
 /** Tracks all documents that substitutions are being applied to */
 let documents = new Map<vscode.Uri,DocumentController>();
@@ -54,7 +54,7 @@ const grammarLocator : tm.IGrammarLocator = {
       if(matchingLanguages.length > 0) {
         const ext = matchingLanguages[0];
         const file = path.join(ext.extensionPath, ext.path);
-        console.info(`Found grammar for ${scopeName} at ${file}`)
+        console.info(`Scope-info: found grammar for ${scopeName} at ${file}`)
         return file;
       }
     } catch(err) { }

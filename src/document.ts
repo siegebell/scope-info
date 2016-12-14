@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
 import * as textUtil from './text-util';
 import * as tm from './text-mate';
-import * as api from './api';
+import * as api from './scope-info';
 
 const debugging = false;
 const activeEditorDecorationTimeout = 20;
